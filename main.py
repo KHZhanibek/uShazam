@@ -9,7 +9,7 @@ def start_command(message):
 @bot.message_handler(commands=['game'])
 def game_command(message):
 	bot.send_message(message.chat.id, "Processing music...")
-	print(randomMusic.Get());
 	bot.send_audio(message.chat.id, randomMusic.Get())
+
 
 bot.polling()
