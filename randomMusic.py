@@ -8,9 +8,6 @@ musicList = obj['tracks']['data'];
 
 def Get():
 	r = randrange(len(musicList))
-	return musicList[r]['preview'] 
-
-Get()
-# def get() :
-
-
+	song_name = musicList[r]['title']
+	song_artist = musicList[r]['artist']['name']
+	return (musicList[r]['preview'], song_artist, song_name)
