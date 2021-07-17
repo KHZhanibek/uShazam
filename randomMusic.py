@@ -10,7 +10,7 @@ obj = requests.get('https://api.deezer.com/playlist/9284561822').json()
 musicList = obj['tracks']['data'];
 # print(len(musicList));
 
-def Get():
+def Get(chat_id):
 	r = randrange(len(musicList))
 
 	song_name = musicList[r]['title']

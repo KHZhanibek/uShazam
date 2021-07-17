@@ -14,7 +14,7 @@ def start_command(message):
 def game_command(message):
   chat_id = message.chat.id
   bot.send_message(chat_id, "Processing music...")
-  send_music = randomMusic.Get()
+  send_music = randomMusic.Get(chat_id)
   bot.send_audio(chat_id, send_music.export("Guess It!", format="mp3"))
 
 @bot.message_handler(content_types=['text'])
