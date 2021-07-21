@@ -1,46 +1,73 @@
 import database
+import re
 
-def IsGuessed(user_text, need_next):
-#  Removing text in (brakets)
-  start = need_next.find("(")
-  end = need_next.find(")")
-  if start != -1 and end != -1:
-    need_next = need_next[start+1:end]
-#-------------------------------------
-  user_text = user_text.replace(' ', '')
-  user_text = user_text.lower()
-  need_next = need_next.replace(' ', '')
-  need_next = need_next.lower()
-  if user_text == need_next:
+def normalize(text):
+  text = text.replace(' ', '')
+  text = text.lower()
+
+  nxt_text = ""
+  found = 0
+  for ch in text:
+    if ch == '(':
+      found = 1
+    elif ch == ')':
+      found = 0
+    else:
+      if found == 0 and ch.isalpha():
+        nxt_text += ch
+  return nxt_text
+
+def isGuessed(user_text, need_next):
+  if(user_text == need_next):
     return 1
   return 0
 
-def SetScore(chat_id, user_text):
-  song_name = database.song_name_list[chat_id]
-  song_artist = database.song_artist_list[chat_id]
-  score = 0;
-  if(IsGuessed(song_name + song_artist, user_text)):
-    score = 3
-  if(IsGuessed(song_artist + song_name, user_text)):
-    score = 3
-  if(IsGuessed(song_name, user_text)):
-    score = 1
-  if(IsGuessed(song_artist, user_text)):
-    score = 1
-  return score;
+def getMask(chat_id, user_text):
+  song_name = normalize(database.song_name_list[chat_id])
+  song_artist = normalize(database.song_artist_list[chat_id])
+  user_text = normalize(user_text)
 
-def GetScore(user_text, name, chat_id):
+  name_guessed = 0
+  artist_guessed = 0
+
+  if isGuessed(song_name, user_text) and database.is_name_guessed == 0:
+    name_guessed = 1
+
+  if isGuessed(song_artist, user_text) and database.is_artist_guessed == 0:
+    artist_guessed = 1
+
+  if name_guessed and artist_guessed:
+    return 3
+  if name_guessed:
+    return 1
+  if artist_guessed:
+    return 2
+  return 0
+
+def getScore(user_text, name, chat_id, bot):
   if chat_id not in database.song_name_list:
-    return "No music given"
+    return
 
-  if name not in database.score_array:
-    database.score_array[name] = 0
+  if database.song_name_list[chat_id] == "":
+    return
 
-  current_point = SetScore(chat_id, user_text)
-  database.score_array[name] += current_point
-  winner = ("You get " + str(current_point) + " points!")
+  if chat_id not in database.score_array:
+    score_array[chat_id] = {}
 
-  tot = ""
-  for key in database.score_array:
-    tot = tot +  key + ' has ' + str(database.score_array[key]) + " points\n"
-  return (winner + "\n\n\n" + tot)
+  if name not in database.score_array[chat_id]:
+    database.score_array[chat_id][name] = 0
+
+  cur_msk = getMask(chat_id, user_text)
+
+  if cur_msk == 1:
+    bot.send_message(chat_id, "The name guessed!\n" + name + " gets 1 point!")
+    database.is_name_guessed[chat_id] = 1
+    database.score_array[chat_id][name] += 1
+  if cur_msk == 2:
+    bot.send_message(chat_id, "The aritst guessed!\n" + name + " gets 1 point!")
+    database.is_artist_guessed[chat_id] = 1
+    database.score_array[chat_id][name] += 1
+  if cur_msk == 3:
+    bot.send_message(chat_id, "Congratz! The name and artist guessed!\n" + name + " gets 3 points!")
+    database.is_artist_guessed[chat_id] = database.is_name_guessed[chat_id] = 1
+    database.score_array[chat_id][name] += 3

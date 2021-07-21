@@ -6,11 +6,10 @@ from urllib.request import urlopen
 import database
 
 
-obj = requests.get('https://api.deezer.com/playlist/9284561822').json()
-musicList = obj['tracks']['data'];
-# print(len(musicList));
 
 def Get(chat_id):
+	obj = database.mainAPI[chat_id]
+	musicList = obj['tracks']['data'];
 	r = randrange(len(musicList))
 
 	song_name = musicList[r]['title']
@@ -23,7 +22,8 @@ def Get(chat_id):
 	music = urlopen(music_url).read()
 	sound = AudioSegment.from_mp3(BytesIO(music))
 	duration = len(sound)
-	start_point = randint(0, duration - 15000)
-	send_music = sound[start_point:start_point + 15000]
+	need_len = min(duration, 20000)
+	start_point = randint(0, duration - need_len)
+	send_music = sound[start_point:start_point + need_len]
 
 	return send_music;
