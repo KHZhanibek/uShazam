@@ -1,7 +1,14 @@
 audiosegment
+certifi
+chardet
 ffmpeg
-pydub
+idna
+numpy
+pip
+pydub 
 pyTelegramBotAPI
 requests
+setuptools
 urllib3
-pip3
+webrtcvad
+wheel
