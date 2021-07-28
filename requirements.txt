@@ -1,0 +1,6 @@
+audiosegment
+ffmpeg
+pydub
+pyTelegramBotAPI
+requests
+urllib3
