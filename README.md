@@ -6,7 +6,7 @@ Gaming bot. Bot will send random music, then user should guess it's name and aut
 
 ### Project Goals
 - [x] Get musics from API
-- [ ] Output Random 10sec piece
-- [ ] Points calculation
+- [x] Output Random 10sec piece
+- [x] Points calculation
 - [ ] Clearing caches 
-- [ ] Playable in groups
+- [x] Playable in groups
